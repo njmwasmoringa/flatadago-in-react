@@ -1,0 +1,9 @@
+#edit-movie-form label{
+    display: block;
+}
+
+#edit-movie-form label, #edit-movie-form input, #edit-movie-form textarea{
+    width: 100%;
+    margin-bottom: 2px;
+    box-sizing: 0;;
+}

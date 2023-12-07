@@ -1,0 +1,9 @@
+ul.ui.list li{
+    display: flex !important;
+    align-items: center;
+}
+
+ul.ui.list li span{
+    margin-left: auto;
+    padding: 3px 10px;
+}
