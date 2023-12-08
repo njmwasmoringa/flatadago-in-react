@@ -12,29 +12,36 @@ import apiClient from './services/api-client';
 
 function App() {
 
-  const [movies, setMovies] = useState(db.films);
-  const [selectedMovie, setSelectedMovie] = useState(movies[0]);
+  const [movies, setMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState();
   const dialogRef = useRef();
 
   function handleEdit() {
     dialogRef.current.showModal();
   }
 
+  function handleSelectMovie(movie){
+    setSelectedMovie(movie);
+  }
+
   function handleCancel() {
     dialogRef.current.close();
   }
 
-  const [gpsLocation, setGPSLocation] = useState({lat:8379, lon:3492837});
+  function handleSaved(updatedMovie){
+    console.log(updatedMovie)
+    let unpdatedMovies = [...movies];
+    const updateMovieIndex = movies.findIndex(m=>m.id === updatedMovie.id);
+    unpdatedMovies.splice(updateMovieIndex, 1, updatedMovie);
+    setMovies(unpdatedMovies);
+  }
 
   useEffect(() => {
-    apiClient.post('/films', gpsLocation).then(films => {
-      console.log(films);
+    apiClient.get('/films').then(response => {
+      setMovies(response.data);
+      setSelectedMovie(response.data[0]);
     });
-  }, [gpsLocation]);
-
-  function handleCarMovement(){
-    setGPSLocation({lat:8379, lon:3492837});
-  }
+  }, []);
 
 
   return (
@@ -42,13 +49,16 @@ function App() {
 
       <Header />
 
+
+
       {selectedMovie && <dialog ref={dialogRef} style={{ width: "300px", minHeight: "300px" }}>
-        <EditMovie movie={selectedMovie} onClose={handleCancel} />
+        <EditMovie movie={selectedMovie} onClose={handleCancel} onSave={handleSaved} />
       </dialog>}
 
       <div className="ui centered grid">
 
-        <Nav movies={movies} onSelectMovie={setSelectedMovie} />
+        <Nav movies={movies} onSelectMovie={handleSelectMovie} />
+        {/* {!movies && ''} */}
 
         {selectedMovie && <>
 

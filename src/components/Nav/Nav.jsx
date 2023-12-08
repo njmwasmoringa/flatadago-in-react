@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./nav.css";
-import EditMovie from "../EditMovie/EditMovie";
 
 export default function Nav({ movies, onSelectMovie }) {
 
     const [listedMovies, setListedMovies] = useState(movies);
+    useEffect(()=>{
+        setListedMovies(movies);
+    }, [movies])
 
     function handleDelete(movie) {
 
