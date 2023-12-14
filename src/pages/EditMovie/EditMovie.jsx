@@ -1,37 +1,42 @@
 import { useEffect, useState } from "react";
 import "./editmovie.css";
 import apiClient from "../../services/api-client";
+import { useParams } from "react-router-dom";
 
-export default function EditMovie({ movie, onClose, onSave }) {
+export default function EditMovie() {
 
     const [formData, setFormData] = useState();
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(()=>{
-        setFormData(movie);
-    }, [movie]);
+    const [movie, setMovie] = useState();
+    const { id } = useParams();
+    console.log(id);
 
-    /* const [title, setTitle] = useState(movie.title);
-    const [description, setDescription] = useState(movie.description);
-    const [time, setTime] = useState(movie.showtime); */
+    useEffect(() => {
+        console.log(`/films/${id}`);
+        apiClient.get(`/films/${id}`).then(responce => {
+            console.log(responce);
+            setFormData(responce.data);
+        });
+    }, []);
 
-    function handleFormDataChange(evt){
+    function handleFormDataChange(evt) {
         setFormData({
             ...formData,
             [evt.target.name]: evt.target.value
         });
     }
 
-    function handleSubmit(event){
+    function handleSubmit(event) {
         event.preventDefault();
-        
+
         setIsSaving(true);
-        apiClient.patch(`/films/${formData.id}`, formData).then(response=>{
-            onSave(response.data);
+        apiClient.patch(`/films/${formData.id}`, formData).then(response => {
+            // onSave(response.data);
             setIsSaving(false);
         });
     }
-    
+
 
     /* function handleTitleChange(evt){
         setTitle(evt.target.value);
@@ -53,20 +58,20 @@ export default function EditMovie({ movie, onClose, onSave }) {
             <input type="text" name="title" value={formData && formData.title} onChange={handleFormDataChange} />
         </div>
 
-        <br/>
+        <br />
         <div>
             <label>Description</label>
-            <textarea  name="description" rows="2" onChange={handleFormDataChange} defaultValue={formData && formData.description}></textarea>
+            <textarea name="description" rows="2" onChange={handleFormDataChange} defaultValue={formData && formData.description}></textarea>
         </div>
 
-        <br/>
+        <br />
         <div>
             <label>Show Time</label>
             <input type="time" name="showtime" value={formData && formData.showtime} onChange={handleFormDataChange} />
         </div>
-        <br/>
+        <br />
         <div>
-            <button onClick={onClose} type="button">Cancel</button> &nbsp;&nbsp;
+            <button type="button">Cancel</button> &nbsp;&nbsp;
             <button disabled={isSaving}>{isSaving ? "Saving..." : "Save"}</button>
         </div>
 
